@@ -1,0 +1,1163 @@
+ENJOY SERIES
+Learning Management System
+Admin Application
+Detailed User Flows & Screens Specification
+Version 4.0 | May 2026
+Confidential — Internal Use Only
+
+-- 1 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 2
+Table of Contents
+Table of Contents ............................................................................................................................... 2
+Introduction & Document Purpose ...................................................................................................... 5
+Login Types & Role Definitions ....................................................................................................... 5
+Permission Matrix ............................................................................................................................ 5
+Navigation Structure by Login Type ................................................................................................ 6
+Organizational Hierarchy Management .............................................................................................. 7
+State Chapter Management ............................................................................................................ 7
+Flow 2.1.1: Create State Chapters — Manual & Bulk ................................................................. 7
+Flow 2.1.2: Edit, Archive & Dashboard ........................................................................................ 7
+City Chapter Management .............................................................................................................. 7
+Flow 2.2.1: Create City Chapters — Manual & Bulk .................................................................... 7
+School Management ....................................................................................................................... 8
+Flow 2.3.1: Create Schools — Manual & Bulk ............................................................................. 8
+Class Management ......................................................................................................................... 8
+Flow 2.4.1: Create Classes — Manual & Bulk ............................................................................. 8
+Flow 2.4.2: Archival & Duplication ............................................................................................... 8
+User Management ............................................................................................................................ 10
+Teacher Management ................................................................................................................... 10
+Flow 3.1.1: Onboard Teachers — Manual & Bulk ..................................................................... 10
+Flow 3.1.2: Manage Assignments & Substitution ...................................................................... 10
+Student Management .................................................................................................................... 10
+Flow 3.2.1: Enroll Students — Manual & Bulk ........................................................................... 10
+Flow 3.2.2: Student Grouping .................................................................................................... 11
+Program & Content Team User Management ............................................................................... 11
+Flow 3.3.1: Create Program Team & Content Team Accounts ................................................. 11
+Content Studio .................................................................................................................................. 12
+Topic Module Builder .................................................................................................................... 12
+Flow 4.1.1: Create a New Topic Module ................................................................................... 12
+Flow 4.1.2: Video Block ............................................................................................................. 12
+Flow 4.1.3: Quiz Block ............................................................................................................... 12
+Flow 4.1.4: Game Block (from Repository) ................................................................................ 13
+Game Builder & Repository .............................................................................................................. 14
+Game Type Catalog ...................................................................................................................... 14
+
+-- 2 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 3
+Game Repository .......................................................................................................................... 16
+Flow 5.1.1: Browse & Manage ................................................................................................... 16
+Game Builder — 4-Step Creation Wizard ..................................................................................... 16
+Flow 5.2.1: Step 1 — Game Type & Metadata .......................................................................... 16
+Flow 5.2.2: Step 2 — Content Levels (Level-Based Difficulty) .................................................. 16
+Game-Type Content Templates & Level Scaling .......................................................................... 18
+01. Drag and Drop / Drag and Fill .............................................................................................. 18
+02. Tap and Speak .................................................................................................................... 18
+03. Spot It .................................................................................................................................. 18
+04. Match It / Match the Following ............................................................................................. 19
+05. Trace / Trace It .................................................................................................................... 19
+06. Pop the Balloon ................................................................................................................... 19
+07. Number Line ........................................................................................................................ 21
+08. Sign Drop ............................................................................................................................. 21
+09. Fill the Bottle / Sort It ........................................................................................................... 21
+10. Reorder Jumbled Letters ..................................................................................................... 21
+11. Reorder Jumbled Sentence ................................................................................................. 22
+12. Drag & Drop — Fill in the Blank ........................................................................................... 22
+13. Blending Game .................................................................................................................... 22
+14. Crossword / Synonyms-Antonyms ...................................................................................... 23
+Game Builder — Adaptive Difficulty Engine .................................................................................. 24
+Flow 5.3.1: Step 3 — Configure Adaptive Rules ....................................................................... 24
+Flow 5.3.2: Step 4 — Appearance, Scoring & Audio ................................................................. 24
+Learning Journeys ............................................................................................................................ 26
+Flow 6.1.1: Create a Learning Journey ..................................................................................... 26
+Flow 6.1.2: Stage Qualifiers, Diagnostics & Mastery................................................................. 26
+Flow 6.1.3: Journey Assignment (Program Team) .................................................................... 26
+Curriculum & Subject Configuration.................................................................................................. 27
+Flow 7.1.1: Subject Management (Content Team) .................................................................... 27
+Flow 7.2.1: Course Builder (Content Team) .............................................................................. 27
+Activation Workflow ....................................................................................................................... 27
+Flow 7.3.1: Assign Curriculum to Classes (Program Team) ...................................................... 27
+Analytics & Reporting ....................................................................................................................... 28
+Flow 8.1.1: Student Dashboard (Admin / Program Team) ........................................................ 28
+Flow 8.2.1: Class Overview (Admin / Program Team) .............................................................. 28
+Flow 8.3.1: School & Platform Reports (Admin / Program Team) ............................................. 28
+
+-- 3 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 4
+Flow 8.4.1: Content Usage Analytics (Content Team) .............................................................. 28
+Communication & Engagement ........................................................................................................ 29
+Flow 9.1.1: Announcements (Admin / Program Team) ............................................................. 29
+Flow 9.2.1: Badges & Gamification (Admin) .............................................................................. 29
+Settings & Platform Configuration (Admin Only)............................................................................... 30
+Flow 10.1.1: Roles & Permissions ............................................................................................. 30
+Flow 10.2.1: Branding ................................................................................................................ 30
+Flow 10.3.1: Notifications .......................................................................................................... 30
+Appendix ........................................................................................................................................... 31
+A. Content Architecture ................................................................................................................. 31
+B. Workflow Ownership ................................................................................................................. 31
+C. Screen Inventory ...................................................................................................................... 31
+D. Revision History ........................................................................................................................ 32
+
+-- 4 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 5
+Introduction & Document Purpose
+This document provides the complete screen-by-screen user flow specification for the Enjoy Series
+LMS Admin Application. It covers all three admin login types: Admin, Program Team, and Content
+Team. All flows map to the Product Requirements Document (PRD v2) and the Enjoy Series Game
+Types Specification.
+Key Design Principle
+The Content Team should never do double work. Topic Modules are the single authoring surface.
+Learning Journeys assemble existing Topic Modules. Games live in a shared repository for reuse. The
+Program Team handles operational deployment so the Content Team focuses purely on content creation.
+Login Types & Role Definitions
+The admin application has three distinct login types. Each login opens a tailored interface showing
+only the modules relevant to that role. There are no separate State Admin or City Admin logins —
+the Admin manages all organizational levels.
+Login Type 	Responsibilities 	Modules Accessible
+Admin
+Full platform owner. Creates and manages
+the organizational hierarchy (states, cities,
+schools, classes). Manages all users
+(teachers, students, program team, content
+team). Controls platform settings, roles,
+permissions, branding, and notifications. Has
+read access to all content and analytics.
+Dashboard, Organization, School Setup,
+Users, Content Studio (read), Curriculum
+(read), Analytics, Communication,
+Settings
+Program
+Team
+Operational deployment and monitoring.
+Assigns curriculum and journeys to classes.
+Manages class schedules and academic
+calendars. Reviews and approves content
+before publishing. Monitors analytics and
+generates reports. Coordinates between
+schools and the content team.
+Dashboard, School Setup (read),
+Curriculum (assign & schedule),
+Analytics, Communication, Activation
+Workflow (review & approve)
+Content Team
+Pure content creation. Builds Topic Modules
+(videos, games, quizzes). Creates and
+manages games in the Game Builder and
+Repository. Assembles Learning Journeys
+by sequencing Topic Modules. Manages
+subjects and course structures. Submits
+content for review.
+Content Studio (full), Game Builder,
+Game Repository, Curriculum (build),
+Activation Workflow (submit & revise)
+Permission Matrix
+Capability 	Admin 	Program Team 	Content Team
+
+-- 5 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 6
+Manage States / Cities /
+Schools Full CRUD 	View only 	No access
+Manage Classes 	Full CRUD View + assign
+curriculum No access
+Manage Teachers &
+Students Full CRUD 	View only 	No access
+Create Topic Modules 	View only 	View only 	Full CRUD
+Create / Edit Games 	View only 	View only 	Full CRUD
+Build Learning Journeys 	View only 	View only 	Full CRUD
+Build Courses / Subjects 	View only 	View only 	Full CRUD
+Review & Approve Content 	Yes 	Yes 	Submit & revise only
+Assign Curriculum to
+Classes Yes 	Yes 	No
+View Analytics & Reports 	All levels 	All levels 	Content usage only
+Manage Settings / Branding 	Full control 	No access 	No access
+Send Announcements 	All scopes 	School / class scope 	No access
+Navigation Structure by Login Type
+Each login type sees a tailored sidebar. Items not accessible are hidden entirely.
+Sidebar Section 	Sub-items 	Admin 	Program 	Content
+Dashboard 	Overview, Alerts 	✓ 	✓ 	✓
+Organization 	States, Cities, Schools 	✓ (full) 	✓ (view) 	—
+School Setup 	Classes, Calendar 	✓ (full) 	✓ (view) 	—
+Users 	Teachers, Students 	✓ (full) 	✓ (view) 	—
+Content Studio Modules, Game Builder,
+Repository ✓ (view) 	✓ (view) 	✓ (full)
+Curriculum Subjects, Courses,
+Journeys ✓ (view) 	✓ (assign) 	✓ (build)
+Analytics 	Reports, Dashboards 	✓ (all) 	✓ (all) 	✓ (usage)
+Communication Announcements,
+Gamification ✓ (full) 	✓ (limited) 	—
+Settings Roles, Branding,
+Notifications ✓ (full) 	— 	—
+
+-- 6 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 7
+Organizational Hierarchy Management
+All organizational management is handled by the Admin login. There are no separate state or city
+admin accounts. The Admin manages the full hierarchy: states, cities, schools, and classes. All
+entity creation supports both manual entry and CSV/Excel bulk upload.
+Universal Upload Pattern
+Every entity list screen has “+ New [Entity]” (manual) and “Upload” (bulk). Upload flow: (1) Download
+template, (2) Fill data, (3) Upload, (4) Validation preview with green/red rows, (5) Confirm import. Error
+rows downloadable for correction.
+State Chapter Management
+Flow 2.1.1: Create State Chapters — Manual & Bulk
+# 	Actor 	Action / Screen 	System Response
+1 	Admin Organization > States; “+ New State” (manual) or
+“Upload” (bulk)
+Manual: slide-over form.
+Bulk: template (State Name,
+Code, Region, Description)
+2 	Admin
+Manual: fill State Name, State Code (auto-generated),
+Region/Zone, Description; upload logo (optional);
+configure academic calendar (year dates, grading
+periods); set curriculum policy (approve subjects from
+global library)
+Inline validation; multi-select
+tag picker for subjects
+3 	Admin Bulk: download template, fill for multiple states,
+upload, review validation preview, confirm import
+States created; error report
+downloadable
+4 	Admin Click “Save & Create” (manual) or “Import Valid
+Rows” (bulk)
+States appear in list;
+success toast
+Flow 2.1.2: Edit, Archive & Dashboard
+# 	Actor 	Action / Screen 	System Response
+1 	Admin Three-dot menu > Edit on any state row; modify fields;
+save
+Record updated with audit
+trail
+2 	Admin 	Three-dot menu > Archive; confirm in modal State archived; child entities
+read-only; reversible
+3 	Admin
+Click a state name to open State Dashboard: header
+card (name, cities count, schools count, students),
+KPI row, city chapter table, quick actions
+Drill-down dashboard for
+monitoring
+City Chapter Management
+Flow 2.2.1: Create City Chapters — Manual & Bulk
+
+-- 7 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 8
+# 	Actor 	Action / Screen 	System Response
+1 	Admin 	Organization > Cities; “+ New City” or “Upload”
+Manual: slide-over. Bulk:
+template (City Name, Code,
+State, District)
+2 	Admin
+Manual: fill name, code, select parent state
+(dropdown), district, description; configure curriculum
+overrides
+Inherited subjects pre-
+selected from state; toggle
+off or add new
+3 	Admin 	Bulk: fill, upload, preview, confirm Cities created; linked to
+parent states
+School Management
+Flow 2.3.1: Create Schools — Manual & Bulk
+# 	Actor 	Action / Screen 	System Response
+1 	Admin 	Organization > Schools; “+ New School” or “Upload”
+Manual: form (name,
+address, phone, email, logo,
+calendar, timezone). Bulk:
+template upload
+2 	Admin Select parent city from dropdown; complete form or
+upload
+Schools created under the
+selected city; school-level
+settings saved
+Class Management
+Flow 2.4.1: Create Classes — Manual & Bulk
+# 	Actor 	Action / Screen 	System Response
+1 	Admin 	School Setup > Classes; “+ New Class” or “Upload”
+Manual: modal. Bulk:
+template (Class Name,
+Grade, Subject, Term,
+Capacity, Teacher Email)
+2 	Admin
+Manual: fill name, grade, subject, term, capacity,
+enrollment type; assign Primary Teacher and Co-
+Teachers
+Teacher picker shows
+workload context
+3 	Admin 	Bulk: fill, upload, preview, confirm Classes created; teachers
+notified
+Flow 2.4.2: Archival & Duplication
+# 	Actor 	Action / Screen 	System Response
+1 	Admin
+Select classes > “Archive Selected” (read-only, data
+preserved) or “Duplicate for Next Term” (clone with
+empty roster)
+Archived classes under
+“Archived” tab; duplicated
+classes ready for new term
+
+-- 8 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 9
+
+-- 9 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 10
+User Management
+The Admin manages all user types: teachers, students, program team members, and content team
+members. The Program Team and Content Team can view user data relevant to their functions but
+cannot create or modify user accounts.
+Teacher Management
+Flow 3.1.1: Onboard Teachers — Manual & Bulk
+# 	Actor 	Action / Screen 	System Response
+1 	Admin 	Users > Teachers; “+ Add Teacher” or “Upload”
+Manual: slide-over. Bulk:
+template (Name, Email,
+Phone, Subjects, Classes)
+2 	Admin
+Manual: enter name, email, phone, subjects (multi-
+select), qualifications; assign to classes with role
+(Primary/Co-Teacher); set per-class permissions (edit
+curriculum, grade, message)
+Email validated; permission
+matrix per class
+3 	Admin 	Click “Send Invitation” or “Import Valid Rows”
+Teachers created; emails
+sent; “Pending” until
+accepted
+Flow 3.1.2: Manage Assignments & Substitution
+# 	Actor 	Action / Screen 	System Response
+1 	Admin Teacher profile > view/edit class assignments, roles,
+permissions
+Inline editing; changes
+immediate
+2 	Admin Temporary substitution: assign substitute with
+start/end dates
+Substitute gains
+permissions for duration;
+original sees “Substitution
+Active”
+Student Management
+Flow 3.2.1: Enroll Students — Manual & Bulk
+# 	Actor 	Action / Screen 	System Response
+1 	Admin 	Users > Students; “+ Enroll” or “Upload”
+Manual: form. Bulk:
+template (Name, Grade,
+Section, Class, Parent
+Name/Email/Phone)
+2 	Admin Manual: fill student + parent info; select classes
+(grade-filtered, capacity shown)
+Parent contact required for
+notifications
+
+-- 10 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 11
+3 	Admin 	Bulk: upload, preview, import valid rows
+Students created; parent
+emails sent; error report
+downloadable
+Flow 3.2.2: Student Grouping
+# 	Actor 	Action / Screen 	System Response
+1 	Admin
+Class > Students > “Manage Groups”; create named
+groups; drag students in or enable auto-grouping by
+diagnostic scores
+Groups for differentiated
+instruction and curriculum
+track assignment
+Program & Content Team User Management
+Flow 3.3.1: Create Program Team & Content Team Accounts
+# 	Actor 	Action / Screen 	System Response
+1 	Admin 	Users > Team Accounts; click “+ Add Team Member” 	Account creation form
+2 	Admin Enter: Name, Email, Phone; select Login Type:
+“Program Team” or “Content Team”
+Login type determines
+which sidebar modules are
+accessible
+3 	Admin For Program Team: optionally scope access to
+specific states, cities, or schools (or leave as “All”)
+Scope selector with
+cascading checkboxes; “All”
+= platform-wide access
+4 	Admin For Content Team: optionally scope to specific
+subjects or grade levels
+Subject and grade multi-
+select; “All” = full content
+library access
+5 	Admin 	Click “Send Invitation”
+Account created; email
+sent; user logs in with their
+role-specific interface
+
+-- 11 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 12
+Content Studio
+The Content Studio is the Content Team’s workspace. It contains the Topic Module Builder, Game
+Builder, and Game Repository. The Program Team and Admin can view content in read-only mode
+but cannot author or edit.
+Content Architecture
+Class → Subject → Topic (per day/session) → Content Blocks (Videos + Games + Quizzes) = 20–25 min
+module. Games created in the Game Builder are stored in the Repository and pulled into any Topic
+Module for reuse.
+Topic Module Builder
+Flow 4.1.1: Create a New Topic Module
+# 	Actor 	Action / Screen 	System Response
+1 Content
+Team
+Content Studio > Topic Modules; “+ New Topic
+Module” Wizard opens (3 steps)
+2 Content
+Team
+Step 1 — Metadata: Subject, Grade Level, Topic Title,
+Description, Target Duration (20–25 min),
+Competency Tags
+Form with dropdowns;
+duration bar
+3 Content
+Team
+Step 2 — Content Blocks: Canvas with Block Palette
+(Video, Game, Quiz, Reading, Audio, Document);
+drag blocks, configure each, connect in sequence
+Running time counter;
+yellow warning if >25 min
+4 Content
+Team Step 3 — Preview & Save
+Saved as Draft; ready for
+review submission to
+Program Team
+Flow 4.1.2: Video Block
+# 	Actor 	Action / Screen 	System Response
+1 Content
+Team
+Drag Video block; upload (MP4/MOV/WebM) or
+embed URL; set watch % for completion, skip-ahead
+lock, chapter markers, inline quiz questions, captions,
+playback speeds
+Full video config with
+preview
+Flow 4.1.3: Quiz Block
+# 	Actor 	Action / Screen 	System Response
+1 Content
+Team
+Drag Quiz block; add questions (MCQ, Multi-Select,
+T/F, Short Answer, Drag & Drop, Fill-in-Blank,
+Ordering, Hotspot); configure time limit, randomize,
+attempts, scoring, question bank mode
+Type-specific editors; drag-
+to-reorder
+
+-- 12 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 13
+Flow 4.1.4: Game Block (from Repository)
+# 	Actor 	Action / Screen 	System Response
+1 Content
+Team
+Drag Game block; modal opens: “Select from
+Repository” (browse/search, preview, use) or “Create
+New” (opens Game Builder, returns with game auto-
+inserted)
+Game referenced (not
+copied); optional per-
+module overrides for
+starting level, time limit,
+completion criteria
+
+-- 13 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 14
+Game Builder & Repository
+The Game Builder is the Content Team’s dedicated tool for creating adaptive educational games.
+The platform supports 14 game types across Maths, English, and Tamil. Games are the primary
+vehicle for adaptive learning — the level-based difficulty engine lives inside each game.
+Adaptive Logic Location
+The adaptive intelligence lives inside the Game Engine. Each game dynamically adjusts difficulty by
+serving content from different levels — easier items when the child struggles, harder items when they
+succeed. The Topic Module stays simple (linear sequence) while games deliver deep personalization
+during active practice.
+Game Type Catalog
+When creating a game, the Content Team selects one of these 14 types, which determines the
+content entry template.
+# 	Game Type 	Subjects 	Age / Levels 	Core Mechanic
+01 Drag and Drop / Drag and
+Fill Maths, English, Tamil 	6–11 / All Drag objects into target
+zones
+02 	Tap and Speak 	English, Tamil 	6–11 / All Tap image, record
+spoken word
+03 	Spot It 	Maths, English, Tamil 	6–11 / All Tap all matching items in
+grid
+04 Match It / Match the
+Following Maths, English 	6–10 / L1–L3 	Draw lines between pairs
+05 	Trace / Trace It 	Maths, English, Tamil 	6–9 / L1–L2 	Finger-trace dotted paths
+06 	Pop the Balloon 	Maths 	6–8 / L1 Pop exact count of
+balloons
+07 	Number Line 	Maths 	6–11 / All Drag numbers into
+sequence slots
+08 	Sign Drop 	Maths 	8–11 / L3–L5 Drag >, <, = between
+numbers
+09 	Fill the Bottle / Sort It 	English, Tamil 	7–11 / L2–L3 Sort words into category
+jars
+10 	Reorder Jumbled Letters 	English 	9–11 / L3 Unscramble letters to
+spell word
+11 Reorder Jumbled
+Sentence English, Tamil 	7–11 / L2–L3 Arrange word cards into
+sentence
+12 Drag & Drop — Fill in the
+Blank English, Tamil 	7–11 / L2–L3 Drag missing word into
+sentence
+13 	Blending Game 	Tamil 	6–10 / L1–L2 Blend phonemes, match
+to image
+
+-- 14 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 15
+14 Crossword / Synonyms-
+Antonyms Tamil 	9–11 / L3 Identify
+synonyms/antonyms
+
+-- 15 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 16
+Game Repository
+Flow 5.1.1: Browse & Manage
+# 	Actor 	Action / Screen 	System Response
+1 Content
+Team
+Content Studio > Game Repository: card grid/table of
+all games (name, type icon, subject, grade, levels,
+usage count, status)
+Faceted filters + search
+2 Content
+Team
+Click game for details: preview player, metadata,
+usage stats, student performance
+Detail page with interactive
+preview
+3 Content
+Team Actions: Edit, Duplicate, Archive, View Usage
+Games referenced (not
+copied); duplicating creates
+an editable variant
+Reuse Model
+Games are referenced into Topic Modules. Updating a game updates it everywhere. Duplicate first to
+create a variant.
+Game Builder — 4-Step Creation Wizard
+Flow 5.2.1: Step 1 — Game Type & Metadata
+# 	Actor 	Action / Screen 	System Response
+1 Content
+Team
+Game Builder > “+ New Game”; browse 14 game type
+cards with icon, name, subjects, mechanic
+description, animated preview
+Card grid; click to select
+2 Content
+Team
+Select a game type; fill metadata: Game Name,
+Subject (filtered to applicable subjects), Grade Level,
+Description, Competency Tags
+Game type locked;
+determines Step 2 template
+3 Content
+Team Click “Next: Content Levels” 	Step 2 opens
+Flow 5.2.2: Step 2 — Content Levels (Level-Based Difficulty)
+Each game is organized into difficulty levels. The content entry template adapts to the game type.
+The Content Team populates each level with items of appropriate difficulty. During gameplay, the
+adaptive engine selects which level’s content to serve.
+# 	Actor 	Action / Screen 	System Response
+1 Content
+Team
+Level Builder opens with default: Level 1 (Easy),
+Level 2 (Medium), Level 3 (Hard); “+ Add Level” for
+more
+Vertical expandable level
+cards
+2 Content
+Team
+Expand a level; the content entry area adapts to the
+selected game type (see type-specific templates
+below)
+Type-specific fields with
+repeatable content rows
+
+-- 16 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 17
+3 Content
+Team
+Populate Level 1 with easiest items, Level 2 with
+moderate items, Level 3 with hardest items
+Each level independent;
+items managed separately
+4 Content
+Team Set minimum items per level (e.g. 10) for variety Validation warning if below
+minimum
+5 Content
+Team Click “Next: Adaptive Rules” 	Step 3 opens
+
+-- 17 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 18
+Game-Type Content Templates & Level Scaling
+Below is the content entry template and level-scaling strategy for each game type. This defines
+what the Content Team sees when populating a level in Step 2.
+01. Drag and Drop / Drag and Fill
+Subjects: Maths, English, Tamil
+Content Entry Template (per level):
+• 	Each item: Draggable Object (image/number/word + audio) + Target Zone label
+• 	Maths: object = count image or numeral; target = basket with numeral or place-value label
+• 	English/Tamil: object = word card or image; target = blank in sentence or labeled box
+• 	Upload images or type text; audio auto-generated or manually uploaded
+• 	Set distractor count (extra draggables with no matching target)
+Level-Based Difficulty Scaling:
+– 	Level 1: 2–3 targets, 3–4 draggables (1 distractor), images only
+– 	Level 2: 3–4 targets, 5–6 draggables (2 distractors), images + text
+– 	Level 3: 4–5 targets, 6–8 draggables (2–3 distractors), text-heavy, compound words /
+multi-digit numbers
+02. Tap and Speak
+Subjects: English, Tamil
+Content Entry Template (per level):
+• 	Each item: Image (upload/library) + Expected Word/Phrase + Reference Audio
+• 	Toggle: Auto-grading (speech recognition) or Teacher-grading mode
+• 	Pronunciation tolerance: Strict / Medium / Lenient
+Level-Based Difficulty Scaling:
+– 	Level 1: Single common words (3–4 letters), large images, lenient recognition
+– 	Level 2: Longer words (5–7 letters), medium tolerance
+– 	Level 3: Short phrases/sentences, strict recognition, context images
+03. Spot It
+Subjects: Maths, English, Tamil
+Content Entry Template (per level):
+• 	Each item: Item (image/digit/word + audio) + Is Target? flag (yes/no)
+
+-- 18 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 19
+• 	Set grid size: 8, 12, or 16 items per round
+• 	Define the audio prompt naming the target
+Level-Based Difficulty Scaling:
+– 	Level 1: 8-item grid, 60% targets, images only, visually distinct
+– 	Level 2: 12-item grid, 50% targets, some text labels
+– 	Level 3: 16-item grid, 40% targets, text-only, similar distractors
+04. Match It / Match the Following
+Subjects: Maths, English
+Content Entry Template (per level):
+• 	Each pair: Left Entry (image/number/word + audio) + Right Entry (image/label + audio)
+• 	Set pairs per round (2–5)
+Level-Based Difficulty Scaling:
+– 	Level 1: 2–3 pairs, image-to-numeral or image-to-word
+– 	Level 2: 4 pairs, word-to-definition
+– 	Level 3: 5 pairs, text-only, close distractors
+05. Trace / Trace It
+Subjects: Maths, English, Tamil
+Content Entry Template (per level):
+• 	Each item: Character to Trace (numeral/letter/word) + Stroke Order data
+• 	Set tolerance band: Loose, Standard, Tight
+• 	Optional reference animation showing stroke order
+Level-Based Difficulty Scaling:
+– 	Level 1: Single digits or basic letters; loose tolerance; prominent guides
+– 	Level 2: Multi-stroke letters, two-digit numbers, simple words; standard tolerance
+– 	Higher: complex characters, cursive variants, tight tolerance
+06. Pop the Balloon
+Subjects: Maths
+Content Entry Template (per level):
+• 	Each item: Target Count (balloons to pop) + Total Balloons on screen
+
+-- 19 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 20
+• 	Set balloon colors and size variation
+Level-Based Difficulty Scaling:
+– 	Level 1: Target 1–5, total 6–8, large balloons, slow float
+– 	Level 2: Target 5–10, total 10–12, moderate speed
+– 	Higher: target as word (not numeral), faster balloons, smaller sizes
+
+-- 20 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 21
+07. Number Line
+Subjects: Maths
+Content Entry Template (per level):
+• 	Each item: Complete Sequence + blanked slots + Fish card pool (correct + distractors)
+• 	Set direction (ascending/descending) and type (consecutive, skip-count, custom)
+Level-Based Difficulty Scaling:
+– 	Level 1: Consecutive 1–10, 1 blank, 2 fish (1 correct + 1 distractor)
+– 	Level 2: Numbers 1–20, 2–3 blanks, 4–5 fish
+– 	Level 3: Skip-counting or 2-digit, 3+ blanks, 6+ fish
+– 	Higher: 3–4 digit numbers, descending, full ordering mode
+08. Sign Drop
+Subjects: Maths
+Content Entry Template (per level):
+• 	Each item: Left Number + Right Number + Correct Sign (>, <, =)
+• 	Toggle visual bundles alongside numbers for lower levels
+Level-Based Difficulty Scaling:
+– 	Level 3: 1-digit with bundle visuals
+– 	Level 4: 2-digit, numbers only
+– 	Level 5: 3–5 digit, close values
+09. Fill the Bottle / Sort It
+Subjects: English, Tamil
+Content Entry Template (per level):
+• 	Each item: Word/Image Card (+ audio) + Category Assignment (which jar)
+• 	Define 2–3 category jars with label (text + audio)
+Level-Based Difficulty Scaling:
+– 	Level 2: 2 jars, 4–6 cards, image + text, distinct categories
+– 	Level 3: 3 jars, 6–8 cards, text-only, similar-sounding categories
+– 	Higher: decoy cards belonging to no jar, abstract categories
+10. Reorder Jumbled Letters
+
+-- 21 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 22
+Subjects: English
+Content Entry Template (per level):
+• 	Each item: Target Word + Context Sentence/Riddle + Decoy Letters (1–2 extras)
+Level-Based Difficulty Scaling:
+– 	Level 3: 4–5 letter words, 1 decoy, sentence context
+– 	Level 4: 6–7 letter words, 2 decoys, riddle clue
+– 	Level 5: 8+ letter words, 2–3 decoys, no hint after first attempt
+11. Reorder Jumbled Sentence
+Subjects: English, Tamil
+Content Entry Template (per level):
+• 	Each item: Complete Correct Sentence (auto-jumbled for display) + optional image
+• 	Set word count per sentence
+Level-Based Difficulty Scaling:
+– 	Level 2: 3–4 words, image support, no punctuation cards
+– 	Level 3: 5–6 words, text only, punctuation included
+– 	Higher: 7+ words, compound sentences, multiple valid orderings
+12. Drag & Drop — Fill in the Blank
+Subjects: English, Tamil
+Content Entry Template (per level):
+• 	Each item: Sentence with blank + Correct Word + 2–3 Distractor Words
+• 	Audio for full sentence and each option
+Level-Based Difficulty Scaling:
+– 	Level 2: Simple sentences, 3 options, image context
+– 	Level 3: Complex sentences, 4 options, close distractors, no image
+– 	Higher: multi-blank, paragraph context, more distractors
+13. Blending Game
+Subjects: Tamil
+Content Entry Template (per level):
+
+-- 22 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 23
+• 	Each item: Letter Tiles (phonemes) + Blended Word Audio + 4 Image Options (1 correct + 3
+distractors)
+• 	Define phoneme breakdown per word
+Level-Based Difficulty Scaling:
+– 	Level 1: 2-phoneme blends, large distinct images, auto-play
+– 	Level 2: 3–4 phonemes, visually similar images, blend on demand
+– 	Higher: 5+ phonemes, text labels instead of images, similar-sounding distractors
+14. Crossword / Synonyms-Antonyms
+Subjects: Tamil
+Content Entry Template (per level):
+• 	Each item: Focus Word (text + audio) + Option Words classified as Synonym, Antonym, or
+Distractor
+• 	Set prompt type: find synonyms, find antonyms, or classify all
+• 	Crossword variant: provide grid layout with clue positions
+Level-Based Difficulty Scaling:
+– 	Level 3: Common focus word, 4 options (2 correct + 2 distractors), definitions shown
+– 	Level 4: 6 options, mixed synonyms and antonyms, no definitions
+– 	Level 5: crossword grid, multiple interconnected focus words
+
+-- 23 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 24
+Game Builder — Adaptive Difficulty Engine
+Step 3 configures how the game dynamically adjusts difficulty during play. These rules are universal
+across all 14 game types.
+Flow 5.3.1: Step 3 — Configure Adaptive Rules
+# 	Actor 	Action / Screen 	System Response
+1 Content
+Team
+Starting Level: “Always Level 1”, “Last Achieved
+Level” (from history), or “Auto-Detect from Profile” Dropdown with descriptions
+2 Content
+Team
+Promotion Rule: “If child answers X of Y correctly →
+promote” (e.g. 4/5) Inputs with visual example
+3 Content
+Team
+Demotion Rule: “If child answers X of Y incorrectly →
+demote” (e.g. 3/5) Inputs with visual example
+4 Content
+Team
+Hold Rule (automatic): mixed performance → stay
+and serve more items Inherent; no config needed
+5 Content
+Team Floor & Ceiling: lowest/highest reachable levels 	Level dropdowns
+6 Content
+Team
+“Encouragement Mode”: on demotion show
+encouraging message
+Checkbox + customizable
+message
+7 Content
+Team
+Completion Criteria: “After N items”, “After M
+minutes”, or “When reaching Level X” Radio buttons with inputs
+Example: Adaptive Drag & Drop Game
+Child starts at Level 1 (simple words: cat, dog). Gets 4/5 correct → Level 2 (garden, bright). Struggles with
+3/5 wrong → back to Level 1. Practices more, 5/5 correct → Level 2 again. This time 4/5 correct → Level
+3 (photography, unbelievable). Real-time adaptation keeps the child in their zone of proximal
+development.
+Flow 5.3.2: Step 4 — Appearance, Scoring & Audio
+# 	Actor 	Action / Screen 	System Response
+1 Content
+Team
+Visual theme: child-friendly preset themes with
+preview
+Theme gallery; colors,
+mascot, background
+2 Content
+Team
+Scoring: points per correct answer per level (L1=1pt,
+L2=2pts, L3=3pts); time bonus; streak bonus
+Inputs per level; toggle
+bonuses
+3 Content
+Team
+Hints: max wrong attempts before hint (default 2);
+max hints per session Number inputs
+4 Content
+Team
+Audio: instructional (on load), content (on tap),
+celebration sounds
+Upload or auto-generate;
+preview player
+5 Content
+Team
+Data capture: score, highest level, per-level stats,
+time per item, adaptive path
+All on by default; customize
+checklist
+6 Content
+Team Click “Save to Repository” Game saved; available for
+Topic Module inclusion
+
+-- 24 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 25
+
+-- 25 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 26
+Learning Journeys
+Journeys are built by the Content Team and deployed by the Program Team. The Journey Builder
+references existing Topic Modules — no content re-creation.
+Flow 6.1.1: Create a Learning Journey
+# 	Actor 	Action / Screen 	System Response
+1 Content
+Team
+Curriculum > Journeys; “+ New Journey”; metadata
+(name, subject, grade, competency tags)
+Duration auto-calculated
+from modules
+2 Content
+Team
+Create stages; within each, add Topic Modules from
+library; set mode (Linear/Flexible); preview Journey
+Map
+Visual canvas; color-coded
+nodes; click any for details
+3 Content
+Team Save; submit for review Saved as Draft; Program
+Team notified for review
+Flow 6.1.2: Stage Qualifiers, Diagnostics & Mastery
+# 	Actor 	Action / Screen 	System Response
+1 Content
+Team
+Stage Qualifier: weighted average threshold across
+module scores to unlock next stage; remediation
+bundle for failures; teacher override toggle
+Per-stage configuration
+2 Content
+Team
+Diagnostic Entry Assessment: optional pre-journey
+quiz mapped to stages; score determines starting
+stage
+Auto-skip or teacher
+approval per stage
+3 Content
+Team
+Mastery levels: Developing (<60%), Proficient (60–
+79%), Mastery (80%+); optional final assessment;
+certificate
+Certificate auto-generated
+on mastery
+Flow 6.1.3: Journey Assignment (Program Team)
+# 	Actor 	Action / Screen 	System Response
+1 Program
+Team
+Select published journey > “Assign”: scope
+(class/group/individual), schedule (dates, time
+recommendations), auto-enroll next journey
+Journey appears on student
+home; coverage tracked in
+dashboards
+
+-- 26 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 27
+Curriculum & Subject Configuration
+Flow 7.1.1: Subject Management (Content Team)
+# 	Actor 	Action / Screen 	System Response
+1 Content
+Team
+Curriculum > Subjects; create with name, code, grade
+levels, category, learning objectives/tags, status Subject added to library
+Flow 7.2.1: Course Builder (Content Team)
+# 	Actor 	Action / Screen 	System Response
+1 Content
+Team
+Curriculum > Courses; create with metadata, add
+Units, assign Topic Modules, tag standards, set
+completion mode
+Saved as Draft; enters
+Activation Workflow
+Activation Workflow
+Content flows from the Content Team through review by the Program Team to deployment.
+# 	Status 	Actor 	Action 	System
+1 	Draft 	Content Team 	Build & save Not visible to students or
+Program Team
+2 	Submitted 	Content Team 	Submit for review Program Team notified; content
+locked for author
+3 	In Review 	Program Team Review, preview,
+comment
+Comments visible to Content
+Team
+4 Revision
+Needed Program Team 	Request changes Content unlocked; returns to
+Content Team
+5 	Approved 	Program Team 	Approve 	Ready to Publish
+6 	Scheduled 	Program Team 	Set date, class, scope 	Scheduled publish job
+7 	Published 	System 	Auto-publish on date 	Live for assigned students
+Flow 7.3.1: Assign Curriculum to Classes (Program Team)
+# 	Actor 	Action / Screen 	System Response
+1 Program
+Team
+Class > Curriculum tab; assign Full Course, Units, or
+standalone Topic Modules; set activation dates;
+exclude specific modules if needed
+Curriculum live on set
+dates; assignment calendar
+updated
+
+-- 27 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 28
+Analytics & Reporting
+Admin and Program Team have full analytics access. Content Team sees content usage metrics
+only (which games/modules are used, how students perform on their content).
+Flow 8.1.1: Student Dashboard (Admin / Program Team)
+# 	Actor 	Action / Screen 	System Response
+1 Admin /
+Program
+Users > Students > click student: progress,
+completion %, journey rings, quiz/game scores,
+adaptive path visualization, per-level correct/incorrect,
+class percentile
+Comprehensive student
+view with game-level
+analytics
+Flow 8.2.1: Class Overview (Admin / Program Team)
+# 	Actor 	Action / Screen 	System Response
+1 Admin /
+Program
+Analytics > Class Reports: completion rates, quiz heat
+map, game performance (avg level,
+promotion/demotion rates, most-missed items), at-risk
+students
+Multi-tab class dashboard
+Flow 8.3.1: School & Platform Reports (Admin / Program Team)
+# 	Actor 	Action / Screen 	System Response
+1 Admin /
+Program
+School Dashboard: enrollment, performance by
+grade/class/subject, teacher activity. Comparative:
+schools in city, cities in state. Report Builder: select
+type, filters, preview, export (PDF/CSV/Excel),
+schedule delivery, secure share link
+Full reporting suite with
+export and scheduling
+Flow 8.4.1: Content Usage Analytics (Content Team)
+# 	Actor 	Action / Screen 	System Response
+1 Content
+Team
+Content Studio > Analytics tab: view per-module and
+per-game usage stats — how many classes use
+each, student completion rates, average scores,
+average game level reached, most-missed items
+Content-centric analytics to
+inform content improvement
+
+-- 28 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 29
+Communication & Engagement
+Flow 9.1.1: Announcements (Admin / Program Team)
+# 	Actor 	Action / Screen 	System Response
+1 	Admin
+All scopes: platform, state, city, school, class.
+Compose (rich text + attachment), channels (in-
+app/email/push), schedule
+Delivered to all users in
+scope
+2 Program
+Team School and class scope only; same compose flow 	Scoped delivery
+Flow 9.2.1: Badges & Gamification (Admin)
+# 	Actor 	Action / Screen 	System Response
+1 	Admin
+Create badges: name, icon, trigger (e.g. “5 modules”,
+“Reach Level 3 in any game”, “7-day streak”), rarity,
+XP; configure leaderboards (scope, metric, privacy,
+reset)
+Badges auto-awarded;
+leaderboards on student
+home
+
+-- 29 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 30
+Settings & Platform Configuration (Admin Only)
+Flow 10.1.1: Roles & Permissions
+# 	Actor 	Action / Screen 	System Response
+1 	Admin Settings > Roles & Permissions; expand each login
+type to view per-module permissions; toggle; save
+Applied platform-wide
+immediately
+Flow 10.2.1: Branding
+# 	Actor 	Action / Screen 	System Response
+1 	Admin
+Settings > Branding; upload logo, set colors,
+customize login page; scope branding to specific
+states/cities or platform-wide; apply
+Immediate effect for all
+users in scope
+Flow 10.3.1: Notifications
+# 	Actor 	Action / Screen 	System Response
+1 	Admin
+Settings > Notifications; for each event set recipients,
+channels (in-app/email/push), frequency
+(instant/daily/weekly); parent portal config
+All future notifications follow
+config
+
+-- 30 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 31
+Appendix
+A. Content Architecture
+Level 	Entity 	Created By 	Purpose
+1 — Platform 	Subject 	Content Team Broad domain (English, Maths,
+Tamil)
+2 — Course 	Course / Unit 	Content Team 	Structured sequence of modules
+3 — Journey 	Learning Journey 	Content Team 	Multi-session adaptive pathway
+4 — Module 	Topic Module 	Content Team 	20–25 min daily session
+5 — Block 	Content Block 	Content Team 	Video, quiz, reading, audio, doc
+5 — Game 	Adaptive Game 	Content Team 	14 types with level-based engine
+B. Workflow Ownership
+Clear separation of duties between the three login types:
+Admin 	Program Team 	Content Team
+Creates the organizational
+structure (states, cities, schools,
+classes). Manages all user
+accounts. Controls settings,
+branding, permissions, and
+notifications.
+Reviews and approves content.
+Assigns curriculum and journeys
+to classes. Manages schedules
+and calendars. Monitors analytics
+and generates reports. Sends
+operational announcements.
+Builds Topic Modules with videos,
+games, and quizzes. Creates
+adaptive games in the Game
+Builder. Assembles Learning
+Journeys. Defines subjects and
+courses. Submits content for
+review.
+C. Screen Inventory
+Module 	Key Screens 	Count
+Organization State/City/School lists + forms +
+upload, Dashboards 10–12
+Users Teacher/Student/Team rosters,
+Groups, Bulk Import 10–12
+Content Studio Topic Module Builder, Block
+Configs, Game Picker 12–15
+Game Builder & Repository
+4-step wizard (14 type templates),
+Repository, Level Editor, Adaptive
+Rules
+14–18
+Journeys & Curriculum
+Journey Builder, Stages,
+Diagnostics, Subjects, Courses,
+Activation
+14–18
+
+-- 31 of 32 --
+
+Enjoy Series LMS 	Admin App Flow Specification v4
+Page 32
+Analytics
+Student/Class/School
+Dashboards, Game Analytics,
+Report Builder
+14–18
+Communication Announcements, Badges,
+Leaderboards 5–7
+Settings Permissions, Branding,
+Notifications 4–6
+Total estimated: 83–106 unique screens/views
+D. Revision History
+Version 	Date 	Author 	Changes
+1.0 	May 2026 	Product 	Initial spec
+2.0 	May 2026 	Product Bulk upload, Game Builder, unified Topic Module builder,
+removed teacher transfer
+3.0 	May 2026 	Product 14 game type catalog with per-type content templates and
+level-based difficulty scaling
+4.0 	May 2026 	Product
+Simplified to 3 login types: Admin, Program Team, Content
+Team. Removed State/City Admin roles. Added Program
+Team and Content Team account management. Updated
+all flows with correct role ownership. Added permission
+matrix, workflow ownership, and content usage analytics for
+Content Team.
+
+-- 32 of 32 --
+
