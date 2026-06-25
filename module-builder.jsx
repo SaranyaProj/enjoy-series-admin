@@ -204,7 +204,12 @@ const newAdaptive = () => ({
   low: "Play an alternate explainer video",
   altVideo: "",
 });
-const newQBlock = () => ({ difficulty: "Easy", lo: "", competency: "", game: "" });
+/* each question slot holds an Easy / Medium / Hard variant pulled from the repository —
+   the in-game engine serves whichever difficulty the learner's last answer earns. */
+const newQPick = () => ({ Easy: "", Medium: "", Hard: "" });
+/* in-game progression rule: last answer outcome → difficulty of the NEXT question */
+const newInGame = () => ({ correct: "Hard", hint: "Medium", wrong: "Easy" });
+const DIFFS = ["Easy", "Medium", "Hard"];
 const pad2 = (n) => String(n).padStart(2, "0");
 
 /* tone → CSS colour pair used by the band rows */
@@ -214,17 +219,52 @@ const TONE = {
   bad:  { fg: "var(--bad)", bg: "var(--st-revise-bg)" },
 };
 
-/* points a question is worth, by difficulty — mirrors the Game Repository's default scoring */
-const QPTS = { Easy: 1, Medium: 2, Hard: 3 };
+const DIFF_TONE = { Easy: "var(--good)", Medium: "var(--st-review)", Hard: "var(--bad)" };
 
-/* numbered part header used to break the game-config into clear steps */
-function PartHead({ n, title, desc }) {
+/* collapsible step — keeps the game-config form short and scannable */
+function Accordion({ n, title, sub, open, onToggle, children }) {
   return (
-    <div style={{ display: "flex", alignItems: "flex-start", gap: 10, margin: "2px 0 12px" }}>
-      <span className="mono" style={{ width: 24, height: 24, flexShrink: 0, borderRadius: 99, background: "var(--pri)", color: "#fff", display: "grid", placeItems: "center", fontSize: 12, fontWeight: 700 }}>{n}</span>
-      <div>
-        <div style={{ fontSize: 13.5, fontWeight: 720, letterSpacing: "-0.01em" }}>{title}</div>
-        {desc && <div className="dim" style={{ fontSize: 11.5, lineHeight: 1.45, marginTop: 2 }}>{desc}</div>}
+    <div className="card" style={{ overflow: "hidden", marginBottom: 12 }}>
+      <button type="button" onClick={onToggle} style={{ width: "100%", display: "flex", alignItems: "center", gap: 11, padding: "13px 15px", border: 0, background: open ? "var(--pri-soft)" : "var(--surface)", textAlign: "left", transition: "background .14s" }}>
+        <span className="mono" style={{ width: 24, height: 24, flexShrink: 0, borderRadius: 99, background: "var(--pri)", color: "#fff", display: "grid", placeItems: "center", fontSize: 12, fontWeight: 700 }}>{n}</span>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 13.5, fontWeight: 720, letterSpacing: "-0.01em", color: open ? "var(--pri-ink)" : "var(--ink)" }}>{title}</div>
+          {sub && <div className="dim" style={{ fontSize: 11.5, marginTop: 1 }}>{sub}</div>}
+        </div>
+        <window.IcChevD style={{ width: 17, height: 17, color: "var(--ink-3)", transform: open ? "none" : "rotate(-90deg)", transition: "transform .15s" }} />
+      </button>
+      {open && <div style={{ padding: 15, borderTop: "1px solid var(--hair)" }}>{children}</div>}
+    </div>
+  );
+}
+
+/* in-game progression rule editor (fold 1): last answer → next question's difficulty */
+function InGameRule({ value, onChange }) {
+  const rules = [
+    { key: "correct", tone: "var(--good)", bg: "var(--st-approve-bg)", icon: "✓", label: "Answered correctly", hint: "first try, no help" },
+    { key: "hint",    tone: "var(--st-review)", bg: "var(--st-review-bg)", icon: "?", label: "Correct with a hint", hint: "needed one nudge" },
+    { key: "wrong",   tone: "var(--bad)", bg: "var(--st-revise-bg)", icon: "✗", label: "Answered incorrectly", hint: "or ran out of tries" },
+  ];
+  return (
+    <div>
+      <div className="dim" style={{ fontSize: 11.5, lineHeight: 1.5, marginBottom: 11 }}>
+        Inside the game, the <b>next</b> question's difficulty adapts to how the learner did on the last one. This is why each question above has an Easy, Medium and Hard variant ready.
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        {rules.map(r => (
+          <div key={r.key} style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 11px", borderRadius: "var(--r-sm)", background: r.bg, border: "1px solid " + r.tone.replace(")", " / 0.25)") }}>
+            <span style={{ width: 22, height: 22, flexShrink: 0, borderRadius: 99, background: r.tone, color: "#fff", display: "grid", placeItems: "center", fontSize: 12, fontWeight: 700 }}>{r.icon}</span>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={{ fontSize: 12, fontWeight: 650, color: r.tone }}>{r.label}</div>
+              <div className="dim" style={{ fontSize: 10.5 }}>{r.hint}</div>
+            </div>
+            <window.IcArrowR style={{ width: 14, height: 14, color: "var(--ink-4)", flexShrink: 0 }} />
+            <span className="dim" style={{ fontSize: 11, fontWeight: 600 }}>serve a</span>
+            <select className="sel" style={{ height: 32, width: 104 }} value={value[r.key]} onChange={(e) => onChange({ ...value, [r.key]: e.target.value })}>
+              {DIFFS.map(d => <option key={d}>{d}</option>)}
+            </select>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -335,17 +375,22 @@ function BlockConfig({ blk, framework, meta, onClose, onSave }) {
   const [d, setD] = useStateM(() => ({
     ...blk, tags: [...(blk.tags || [])],
     cfuOn: !!(blk.cfus && blk.cfus.length), cfus: blk.cfus || [],
-    numQ: blk.numQ || 2, qblocks: blk.qblocks && blk.qblocks.length ? blk.qblocks : [newQBlock(), newQBlock()],
+    numQ: blk.numQ || 2,
+    qpicks: blk.qpicks && blk.qpicks.length ? blk.qpicks : [newQPick(), newQPick()],
+    inGame: blk.inGame || newInGame(),
     adaptive: blk.adaptive || newAdaptive(),
   }));
-  const fw = framework === "maths" ? window.MATHS_FW : window.LANG_FW;
+  const [openStep, setOpenStep] = useStateM("q"); // accordion: which step is expanded
+  const toggleStep = (s) => setOpenStep(o => (o === s ? null : s));
   const toggleTag = (k) => setD(s => ({ ...s, tags: s.tags.includes(k) ? s.tags.filter(x => x !== k) : [...s.tags, k] }));
   const matchingGames = window.GAMES.filter(g => !meta || g.subject === meta.subject);
+  /* learning outcomes for the dropdown — drawn from the subject's competency framework */
+  const loOptions = framework === "maths" ? window.MATHS_FW : window.LANG_FW.map(x => x.n);
   /* alternate explainer videos a struggling learner can be re-taught with */
   const videoOptions = Object.values(window.ANCHORS).map(a => a.name).filter((n, i, arr) => arr.indexOf(n) === i);
 
-  const setNumQ = (n) => setD(s => { const b = [...s.qblocks]; while (b.length < n) b.push(newQBlock()); b.length = Math.max(0, n); return { ...s, numQ: n, qblocks: b }; });
-  const setQB = (i, patch) => setD(s => ({ ...s, qblocks: s.qblocks.map((b, x) => x === i ? { ...b, ...patch } : b) }));
+  const setNumQ = (n) => setD(s => { const b = [...s.qpicks]; while (b.length < n) b.push(newQPick()); b.length = Math.max(0, n); return { ...s, numQ: n, qpicks: b }; });
+  const setQpick = (i, diff, game) => setD(s => ({ ...s, qpicks: s.qpicks.map((b, x) => x === i ? { ...b, [diff]: game } : b) }));
   const setCFU = (i, patch) => setD(s => ({ ...s, cfus: s.cfus.map((c, x) => x === i ? { ...c, ...patch } : c) }));
   const setCFUOpt = (ci, oi, patch, single) => setD(s => ({ ...s, cfus: s.cfus.map((c, x) => x === ci ? { ...c, options: c.options.map((o, y) => y === oi ? { ...o, ...patch } : (single && patch.correct ? { ...o, correct: false } : o)) } : c) }));
 
@@ -355,9 +400,14 @@ function BlockConfig({ blk, framework, meta, onClose, onSave }) {
       <div className="field"><label>Activity title</label><input className="inp" value={d.title} onChange={(e) => setD({ ...d, title: e.target.value })} /></div>
       <div className="row-2">
         <div className="field"><label>Est. minutes</label><input className="inp mono" type="number" value={d.mins} onChange={(e) => setD({ ...d, mins: +e.target.value || 0 })} /></div>
-        <div className="field"><label>{framework === "maths" ? "Number domain" : "Language strand"}</label><input className="inp" value={d.domain} onChange={(e) => setD({ ...d, domain: e.target.value })} placeholder={framework === "maths" ? "e.g. Place value" : "e.g. Phonics"} /></div>
+        <div className="field">
+          <label>Learning outcome <span className="hint">what the child can do after this</span></label>
+          <select className="sel" value={d.lo} onChange={(e) => setD({ ...d, lo: e.target.value })}>
+            <option value="">Choose a learning outcome…</option>
+            {loOptions.map(o => <option key={o} value={o}>{o}</option>)}
+          </select>
+        </div>
       </div>
-      <div className="field"><label>Learning outcome <span className="hint">what the child can do after this activity</span></label><textarea className="inp" rows={2} value={d.lo} onChange={(e) => setD({ ...d, lo: e.target.value })}></textarea></div>
 
       <hr className="hairline" style={{ margin: "4px 0 16px" }} />
 
@@ -415,71 +465,74 @@ function BlockConfig({ blk, framework, meta, onClose, onSave }) {
         </div>
       </>}
 
-      {/* ---- GAME ACTIVITY: two clear parts — (1) pick questions, (2) adaptive path ---- */}
+      {/* ---- GAME ACTIVITY: two collapsible steps — (1) pick questions, (2) adaptive path ---- */}
       {!isVideo && <>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 13px", borderRadius: "var(--r-md)", background: "var(--pri-soft)", marginBottom: 16 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 13px", borderRadius: "var(--r-md)", background: "var(--pri-soft)", marginBottom: 14 }}>
           <window.IcGame style={{ width: 18, height: 18, color: "var(--pri)", flexShrink: 0 }} />
-          <div style={{ fontSize: 12, color: "var(--pri-ink)" }}>Two steps to set up <b>{v.label}</b>: first choose the questions, then decide what the score should do next.</div>
+          <div style={{ fontSize: 12, color: "var(--pri-ink)" }}>Set up <b>{v.label}</b> in two steps — choose the questions, then set how the game adapts.</div>
         </div>
 
-        {/* PART 1 — Select questions */}
-        <PartHead n={1} title="Select questions" desc="Pull each question from the Game Repository. Points per question are set on the game itself (in the Repository) — shown here as a reference." />
-
-        <div className="field">
-          <label>Number of questions <span className="hint">one question block is generated per question</span></label>
-          <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-            <input className="inp mono" style={{ width: 80 }} type="number" min="1" max="10" value={d.numQ} onChange={(e) => setNumQ(Math.max(1, Math.min(10, +e.target.value || 1)))} />
-            <div className="seg">{[1,2,3,4].map(n => <button key={n} className={d.numQ === n ? "on" : ""} onClick={() => setNumQ(n)}>{n}</button>)}</div>
+        {/* STEP 1 — Select questions */}
+        <Accordion n={1} title="Select questions" sub={d.numQ + " question" + (d.numQ > 1 ? "s" : "") + " · Easy / Medium / Hard each"} open={openStep === "q"} onToggle={() => toggleStep("q")}>
+          <div className="field">
+            <label>How many questions in this game? <span className="hint">up to 4</span></label>
+            <div className="seg" style={{ width: "fit-content" }}>{[1, 2, 3, 4].map(n => <button key={n} className={d.numQ === n ? "on" : ""} onClick={() => setNumQ(n)}>{n}</button>)}</div>
           </div>
-        </div>
 
-        {/* auto-applied repository filters from the lesson context */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center", margin: "2px 0 14px" }}>
-          <span className="dim" style={{ fontSize: 11, fontWeight: 600 }}>Auto-filtered by</span>
-          {meta && <window.SubjectChip subject={meta.subject} sm />}
-          {meta && <span className="chip" style={{ height: 20, fontSize: 10.5 }}>{meta.level}</span>}
-          {meta && meta.title && <span className="chip" style={{ height: 20, fontSize: 10.5 }}>Lesson: {meta.title}</span>}
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {d.qblocks.map((b, i) => (
-            <div key={i} className="card card-pad">
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 11 }}>
-                <span className="mono" style={{ width: 22, height: 22, borderRadius: 7, background: "var(--pri-soft)", color: "var(--pri-ink)", display: "grid", placeItems: "center", fontSize: 11, fontWeight: 700 }}>{i + 1}</span>
-                <b style={{ fontSize: 13 }}>Question {i + 1}</b>
-                {/* points are inherited from the chosen game's difficulty — surfaced read-only so scoring is transparent */}
-                <span className="chip mono" title="Points come from the game in the Repository" style={{ marginLeft: "auto", height: 21, fontSize: 10.5, background: "var(--st-approve-bg)", color: "var(--st-approve)", fontWeight: 700 }}><window.IcTarget style={{ width: 12, height: 12 }} />Worth {QPTS[b.difficulty] || 1} pts</span>
-              </div>
-              <div className="row-2" style={{ marginBottom: 10 }}>
-                <div className="field" style={{ marginBottom: 0 }}><label>Difficulty <span className="hint">sets the point value</span></label><div className="seg" style={{ width: "fit-content" }}>{["Easy","Medium","Hard"].map(x => <button key={x} className={b.difficulty === x ? "on" : ""} onClick={() => setQB(i, { difficulty: x })}>{x}</button>)}</div></div>
-                <div className="field" style={{ marginBottom: 0 }}><label>Competency tag</label><input className="inp" value={b.competency} onChange={(e) => setQB(i, { competency: e.target.value })} placeholder="e.g. Counting" /></div>
-              </div>
-              <div className="field" style={{ marginBottom: 10 }}><label>Learning outcome</label><input className="inp" value={b.lo} onChange={(e) => setQB(i, { lo: e.target.value })} placeholder="Outcome this question assesses" /></div>
-              <div className="field" style={{ marginBottom: 0 }}>
-                <label>Select question from Game Repository <span className="hint">filtered to {meta ? meta.subject + " · " + meta.level : "this lesson"}</span></label>
-                <select className="sel" value={b.game} onChange={(e) => setQB(i, { game: e.target.value })}>
-                  <option value="">Choose a relevant game…</option>
-                  {matchingGames.map(g => <option key={g.id} value={g.name}>{g.name} · {window.difficultySpan(g.levels)}</option>)}
-                </select>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* score-summary: makes the "combined score" idea concrete before the path logic */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 12px", borderRadius: "var(--r-sm)", background: "var(--surface-2)", border: "1px dashed var(--hair-2)", marginTop: 12 }}>
-          <window.IcTarget style={{ width: 15, height: 15, color: "var(--ink-3)", flexShrink: 0 }} />
-          <div style={{ fontSize: 11.5, color: "var(--ink-3)" }}>
-            This activity is worth <b className="mono" style={{ color: "var(--ink)" }}>{d.qblocks.reduce((a, b) => a + (QPTS[b.difficulty] || 1), 0)} pts</b> across {d.numQ} question{d.numQ > 1 ? "s" : ""}.
-            The learner's <b>combined score %</b> (points earned ÷ points possible) is what the adaptive path below reacts to.
+          <div style={{ display: "flex", alignItems: "flex-start", gap: 8, padding: "9px 12px", borderRadius: "var(--r-sm)", background: "var(--surface-2)", border: "1px solid var(--hair)", margin: "2px 0 14px" }}>
+            <window.IcSparkle style={{ width: 14, height: 14, color: "var(--pri)", flexShrink: 0, marginTop: 1 }} />
+            <span style={{ fontSize: 11.5, color: "var(--ink-3)", lineHeight: 1.45 }}>For each question, pick an <b style={{ color: "var(--good)" }}>Easy</b>, <b style={{ color: "var(--st-review)" }}>Medium</b> and <b style={{ color: "var(--bad)" }}>Hard</b> version from the repository. The game serves the right one to each child based on how they're doing — set the rule in Step&nbsp;2.</span>
           </div>
-        </div>
 
-        {/* PART 2 — Adaptive learning path */}
-        <div style={{ marginTop: 18 }}>
-          <PartHead n={2} title="Adaptive learning path" desc="The combined score from the questions above decides what happens next — advance, practise again, or re-teach." />
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center", margin: "0 0 14px" }}>
+            <span className="dim" style={{ fontSize: 11, fontWeight: 600 }}>Repository auto-filtered by</span>
+            {meta && <window.SubjectChip subject={meta.subject} sm />}
+            {meta && <span className="chip" style={{ height: 20, fontSize: 10.5 }}>{meta.level}</span>}
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {d.qpicks.map((b, i) => (
+              <div key={i} className="card card-pad" style={{ background: "var(--surface-2)" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 11 }}>
+                  <span className="mono" style={{ width: 22, height: 22, borderRadius: 7, background: "var(--pri-soft)", color: "var(--pri-ink)", display: "grid", placeItems: "center", fontSize: 11, fontWeight: 700 }}>{i + 1}</span>
+                  <b style={{ fontSize: 13 }}>Question {i + 1}</b>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+                  {DIFFS.map(diff => (
+                    <div key={diff} style={{ display: "flex", alignItems: "center", gap: 9 }}>
+                      <span style={{ width: 74, flexShrink: 0, fontSize: 11, fontWeight: 700, color: DIFF_TONE[diff], display: "inline-flex", alignItems: "center", gap: 6 }}>
+                        <span style={{ width: 7, height: 7, borderRadius: 99, background: DIFF_TONE[diff] }}></span>{diff}
+                      </span>
+                      <select className="sel" style={{ flex: 1 }} value={b[diff]} onChange={(e) => setQpick(i, diff, e.target.value)}>
+                        <option value="">Select {diff.toLowerCase()} question from repository…</option>
+                        {matchingGames.map(g => <option key={g.id} value={g.name}>{g.name}</option>)}
+                      </select>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Accordion>
+
+        {/* STEP 2 — Adaptive learning path (two folds) */}
+        <Accordion n={2} title="Adaptive learning path" sub="How the game adapts — between questions, and after the game" open={openStep === "path"} onToggle={() => toggleStep("path")}>
+          {/* Fold 1 — within the game */}
+          <div style={{ fontSize: 12.5, fontWeight: 720, display: "flex", alignItems: "center", gap: 7, marginBottom: 8 }}>
+            <span className="chip mono" style={{ height: 19, fontSize: 10, background: "var(--pri-soft)", color: "var(--pri-ink)", fontWeight: 700 }}>2a</span>
+            Between questions <span className="dim" style={{ fontWeight: 500, fontSize: 11.5 }}>· in-game difficulty</span>
+          </div>
+          <InGameRule value={d.inGame} onChange={(inGame) => setD(s => ({ ...s, inGame }))} />
+
+          <hr className="hairline" style={{ margin: "18px 0 16px" }} />
+
+          {/* Fold 2 — after the game */}
+          <div style={{ fontSize: 12.5, fontWeight: 720, display: "flex", alignItems: "center", gap: 7, marginBottom: 8 }}>
+            <span className="chip mono" style={{ height: 19, fontSize: 10, background: "var(--pri-soft)", color: "var(--pri-ink)", fontWeight: 700 }}>2b</span>
+            After the game <span className="dim" style={{ fontWeight: 500, fontSize: 11.5 }}>· based on the total score</span>
+          </div>
           <AdaptivePath value={d.adaptive} onChange={(adaptive) => setD(s => ({ ...s, adaptive }))} videoOptions={videoOptions} totalQ={d.numQ} />
-        </div>
+        </Accordion>
       </>}
     </window.SlideOver>
   );

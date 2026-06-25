@@ -425,3 +425,26 @@ textarea.inp { height: auto; padding: 9px 11px; resize: vertical; line-height: 1
   font-size: 12px;
 }
 .prog-table tbody tr.prog-group:first-child td { border-top: 0; }
+
+/* ===========================================================================
+   Lighter colour tones across menus & option controls (2026-06-25c)
+   Softer, friendlier accents on the things people click — without raising contrast.
+   =========================================================================== */
+/* sidebar: a barely-there indigo wash so the rail feels warmer */
+.rail { background: linear-gradient(190deg, color-mix(in oklab, var(--pri-soft), var(--surface) 55%), var(--surface) 42%); }
+.nav-group-label { color: var(--ink-3); }
+.nav-item:hover { background: var(--pri-soft); color: var(--pri-ink); }
+
+/* segmented controls: tinted track + soft-coloured active chip */
+.seg { background: color-mix(in oklab, var(--pri-soft), var(--surface-2) 40%); border-color: var(--pri-soft-2); }
+.seg button:hover { color: var(--pri-ink); }
+.seg button.on { background: var(--surface); color: var(--pri-ink); box-shadow: var(--sh-1); }
+
+/* selects, inputs & filters: gentle tinted hover/focus */
+.sel:hover, .inp:hover, textarea.inp:hover { border-color: var(--pri-soft-2); }
+.filter-pill:hover { background: var(--pri-soft); border-color: var(--pri-soft-2); color: var(--pri-ink); }
+.filter-pill:hover svg { color: var(--pri); }
+.searchbox:focus-within { box-shadow: 0 0 0 3px var(--pri-soft); }
+
+/* toolbars sit on a faint tinted bar so option rows read as a group */
+.toolbar { background: linear-gradient(180deg, color-mix(in oklab, var(--pri-soft), transparent 55%), transparent); border-radius: var(--r-md); padding: 8px 10px; }
